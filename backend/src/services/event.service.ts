@@ -44,3 +44,12 @@ export const getAllEvents = async (page: number = 1, limit: number = 10, dateFil
     },
   };
 };
+
+export const getEventById = async (id: string) => {
+
+  const event = await prisma.event.findUnique({ // select * from event where id = id
+    where: { id },
+  });
+
+  return event;
+};

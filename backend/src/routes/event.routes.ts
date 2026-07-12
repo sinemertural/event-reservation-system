@@ -3,7 +3,10 @@ import * as eventController from '../controllers/event.controller';
 
 const router = Router();
 
-// GET isteği ile '/events' adresine gelindiğinde, işlemi eventController.getEvents fonksiyonuna devret
+// Tüm etkinlikleri listele (Sayfalama ve Filtreleme ile)
 router.get('/', eventController.getEvents);
+
+// Belirli bir etkinliği getir
+router.get('/:id', eventController.getEvent);
 
 export default router;

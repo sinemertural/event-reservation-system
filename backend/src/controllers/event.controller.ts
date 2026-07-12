@@ -30,3 +30,30 @@ export const getEvents = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
+
+export const getEvent = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string; // URL'den gelen id parametresini alıyoruz. 
+    const event = await eventService.getEventById(id); 
+
+    if (!event) { 
+      res.status(404).json({
+        success: false,
+        message: 'Aradığınız etkinlik bulunamadı.',
+      });
+      return; 
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: 'Etkinlik detayı başarıyla getirildi.',
+      data: event,
+    });
+    
+  } catch (error: any) {
+    res.status(500).json({ 
+      success: false,
+      message: error.message || 'Etkinlik detayı getirilirken sunucu kaynaklı bir hata oluştu.',
+    });
+  }
+};
