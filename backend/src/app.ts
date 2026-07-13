@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.routes';
 import eventRoutes from './routes/event.routes';
+import reservationRoutes from './routes/reservation.routes';
 
 const app: Application = express();
 
@@ -10,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes); //'/api/auth' ile başlayan tüm istekleri authRoutes dosyamıza yönlendir
 app.use('/api/events', eventRoutes); //'/api/events' ile başlayan tüm istekleri eventRoutes dosyamıza yönlendir
+app.use('/api/reservations', reservationRoutes); //'/api/reservations' ile başlayan tüm istekleri reservationRoutes dosyamıza yönlendir
 
 //Healty check
 app.get('/ping', (req: Request, res: Response) => {

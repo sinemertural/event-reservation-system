@@ -1,0 +1,38 @@
+import prisma from '../config/prisma';
+
+export const createReservation = async (userId: string, eventId: string, guestCount: number) => {
+
+  return await prisma.$transaction(async (tx) => { // transaction fonksiyonu, birden fazla veritabanı işlemini tek bir işlem olarak yürütmemizi sağlar. Eğer bu işlemlerden biri başarısız olursa, tüm işlemler geri alınır (rollback).
+    
+    // atomik güncelleme işlemi
+    const updatedEvent = await tx.event.updateMany({ // updateMany, birden fazla kaydı güncelleyebilir. Ancak biz burada sadece bir kaydı güncellemek istiyoruz. Fakat "where" şartına birden fazla koşul ekleyebilmek için updateMany kullanıyoruz.
+      where: {
+        id: eventId,
+        available_quota: {
+          gte: guestCount, //Kalan kontenjan, istenen kişi sayısından büyük veya EŞİT olmalı!
+        },
+      },
+      data: {
+        available_quota: {
+          decrement: guestCount, //Şart sağlanıyorsa kontenjanı anında kişi sayısı kadar düş.
+        },
+      },
+    }); // bu fonksiyon tek bir SQL sorgusu olarak çalışır ve güncellenen kayıt sayısını döndürür. 
+
+    // Eğer count 0 dönerse, bu etkinliğin ya ID'si yanlıştır ya da KONTENJANI YETERSİZDİR.
+    if (updatedEvent.count === 0) {
+      throw new Error('Yetersiz kontenjan veya etkinlik bulunamadı.');
+    }
+
+    // Yukarıdaki şart başarıyla geçildiyse ve kontenjan düşüldüyse, artık gönül rahatlığıyla rezervasyon belgesini kesebiliriz.
+    const newReservation = await tx.reservation.create({
+      data: {
+        user_id: userId,
+        event_id: eventId,
+        guest_count: guestCount, 
+      },
+    });
+
+    return newReservation;
+  });
+};
