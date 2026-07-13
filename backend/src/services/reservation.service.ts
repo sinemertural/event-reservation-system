@@ -36,3 +36,19 @@ export const createReservation = async (userId: string, eventId: string, guestCo
     return newReservation;
   });
 };
+
+export const getUserReservations = async (userId: string) => {
+  const reservations = await prisma.reservation.findMany({
+    where: { 
+      user_id: userId 
+    },
+    include: {
+      event: true, // Rezervasyonla ilişkili etkinlik bilgilerini de getir(Mobil Uygulama için)
+    },
+    orderBy: { 
+      createdAt: 'desc' // En son alınan bileti en üstte göster
+    },
+  });
+
+  return reservations;
+};

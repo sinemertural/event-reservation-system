@@ -44,3 +44,34 @@ export const createReservation = async (req: Request, res: Response): Promise<vo
     });
   }
 };
+
+export const getMyReservations = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // tokendan kullanıcı ID'sini alıyoruz.
+    const userId = (req as any).user.userId;
+
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'Kullanıcı kimliği okunamadı.',
+      });
+      return;
+    }
+
+    // 2. Servisi çağırıp biletleri getiriyoruz
+    const reservations = await reservationService.getUserReservations(userId);
+
+    // 3. Başarıyla yanıt dönüyoruz
+    res.status(200).json({
+      success: true,
+      message: 'Rezervasyonlarınız başarıyla getirildi.',
+      data: reservations,
+    });
+
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Rezervasyonlar getirilirken bir hata oluştu.',
+    });
+  }
+};
