@@ -52,3 +52,40 @@ export const getUserReservations = async (userId: string) => {
 
   return reservations;
 };
+
+export const cancelReservation = async (userId: string, reservationId: string) => {
+  // önce rezervasyonu bulalım 
+  const existingReservation = await prisma.reservation.findUnique({
+    where: { id: reservationId },
+  });
+
+  // Eğer böyle bir rezervasyon yoksa işlemi kes
+  if (!existingReservation) {
+    throw new Error('Rezervasyon bulunamadı.');
+  }
+
+  // Kullanıcı başkasının biletini mi iptal etmeye çalışıyor?
+  if (existingReservation.user_id !== userId) {
+    throw new Error('Bu rezervasyonu iptal etme yetkiniz yok.');
+  }
+
+  // 2. Transaction başlatıyoruz çünkü silme ve kontenjanı geri açma işlemlerini tek bir işlem olarak yapmak istiyoruz. Eğer biri başarısız olursa, diğerini de geri alacağız.
+  return await prisma.$transaction(async (tx) => {
+    // rezervasyonu sil
+    const deletedReservation = await tx.reservation.delete({
+      where: { id: reservationId },
+    });
+
+    // etkinliğin kontenjanını geri aç (increment)
+    await tx.event.update({
+      where: { id: existingReservation.event_id },
+      data: {
+        available_quota: {
+          increment: existingReservation.guest_count, // kaç bilet aldıysa o kadar kontenjanı geri aç
+        },
+      },
+    });
+
+    return deletedReservation;
+  });
+};

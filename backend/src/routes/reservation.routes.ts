@@ -12,4 +12,8 @@ router.get('/me', requireAuth, reservationController.getMyReservations);
 // (Yeni rezervasyon oluşturur - Token zorunlu)
 router.post('/', requireAuth, reservationController.createReservation);
 
+// Endpoint: DELETE /api/reservations/:id
+// (Rezervasyonu iptal eder - Token zorunlu)
+router.delete('/:id', requireAuth, reservationController.deleteReservation);
+
 export default router;

@@ -75,3 +75,41 @@ export const getMyReservations = async (req: Request, res: Response): Promise<vo
     });
   }
 };
+
+export const deleteReservation = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).user.userId;
+    const reservationId = req.params.id as string;
+
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'Kullanıcı kimliği okunamadı.',
+      });
+      return;
+    }
+
+    // servisi çağırıpiptal ve kontenjan açma işlemini başlatıyoruz
+    await reservationService.cancelReservation(userId, reservationId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Rezervasyon başarıyla iptal edildi ve kontenjan geri açıldı.',
+    });
+
+  } catch (error: any) {
+    if (error.message === 'Rezervasyon bulunamadı.') {
+      res.status(404).json({ success: false, message: error.message });
+      return;
+    }
+    if (error.message === 'Bu rezervasyonu iptal etme yetkiniz yok.') {
+      res.status(403).json({ success: false, message: error.message });
+      return;
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Rezervasyon iptal edilirken bir hata oluştu.',
+    });
+  }
+};
