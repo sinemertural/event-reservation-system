@@ -38,3 +38,11 @@ final eventListControllerProvider =
         return EventListController();
       },
     );
+
+// FutureProvider.family özelliği dışarıdan bir parametre alıp tek seferlik veri çekmek için kullanılır.
+// ID'ye göre tekil etkinlik detayını getiren provider
+final eventDetailProvider = FutureProvider.family
+    .autoDispose<EventModel, String>((ref, id) async {
+      final repository = ref.read(eventRepositoryProvider);
+      return await repository.getEventById(id);
+    });

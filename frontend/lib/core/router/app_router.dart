@@ -1,4 +1,5 @@
 import 'package:frontend/features/auth/register_screen.dart';
+import 'package:frontend/features/events/event_detail_screen.dart';
 import 'package:frontend/features/events/events_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,16 +15,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 1. GİRİŞ YAP EKRANI
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
 
-      // 2. ETKİNLİKLER (ANA SAYFA)
+      // 2. KAYIT OL EKRANI
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+
+      // 3. ETKİNLİKLER (ANA SAYFA)
       GoRoute(
         path: '/events',
         builder: (context, state) => const EventsScreen(),
       ),
 
-      // 3. KAYIT OL EKRANI
+      // 4. ETKİNLİK DETAYI EKRANI
       GoRoute(
-        path: '/register',
-        builder: (context, state) => const RegisterScreen(),
+        path: '/events/:id',
+        builder: (context, state) {
+          // URL'deki ':id' parametresini yakalıyoruz
+          final eventId = state.pathParameters['id']!;
+          return EventDetailScreen(eventId: eventId);
+        },
       ),
     ],
   );
