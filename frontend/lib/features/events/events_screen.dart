@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/features/auth/auth_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'event_controller.dart';
 
@@ -16,11 +17,17 @@ class EventsScreen extends ConsumerWidget {
         title: const Text('Etkinlikler'),
         centerTitle: true,
         actions: [
-          // İleride takvim filtresi eklemek için yer tutucu ikon
           IconButton(
             icon: const Icon(Icons.confirmation_num_outlined),
             onPressed: () {
               context.push('/my-reservations');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              ref.read(authControllerProvider.notifier).logout();
+              context.go('/login');
             },
           ),
         ],
