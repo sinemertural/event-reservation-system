@@ -18,13 +18,9 @@ class EventsScreen extends ConsumerWidget {
         actions: [
           // İleride takvim filtresi eklemek için yer tutucu ikon
           IconButton(
-            icon: const Icon(Icons.calendar_month),
+            icon: const Icon(Icons.confirmation_num_outlined),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Tarih filtresi yakında eklenecek!'),
-                ),
-              );
+              context.push('/my-reservations');
             },
           ),
         ],

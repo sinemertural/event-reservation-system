@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/features/reservations/reservation_repository.dart';
 import 'event_controller.dart';
 
 class EventDetailScreen extends ConsumerWidget {
@@ -78,18 +79,60 @@ class EventDetailScreen extends ConsumerWidget {
                 SizedBox(
                   height: 54,
                   child: ElevatedButton(
-                    // İş Kuralı: Kontenjan doluysa buton pasif (null) kalır
                     onPressed: isFull
                         ? null
-                        : () {
-                            // TODO: Bir sonraki aşamada rezervasyon API'si buraya eklenecek
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Rezervasyon işlemi yakında eklenecek!',
-                                ),
+                        : () async {
+                            // Yükleniyor dialogu göster (İşlem bitene kadar ekranı kilitler)
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => const Center(
+                                child: CircularProgressIndicator(),
                               ),
                             );
+
+                            try {
+                              final repo = ref.read(
+                                reservationRepositoryProvider,
+                              );
+                              // Şimdilik varsayılan olarak 1 kişilik rezervasyon atıyoruz
+                              await repo.createReservation(eventId, 1);
+
+                              // İşlem bitince yükleniyor dialogunu kapat
+                              if (context.mounted) Navigator.pop(context);
+
+                              // Başarılı mesajı
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Rezervasyon başarıyla oluşturuldu!',
+                                    ),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              }
+
+                              // Etkinlik listesini ve bu detayı yenile ki yeni kontenjan ekrana yansısın
+                              ref.invalidate(eventListControllerProvider);
+                              ref.invalidate(eventDetailProvider(eventId));
+                            } catch (e) {
+                              // Hata varsa dialogu kapat ve hatayı göster
+                              if (context.mounted) Navigator.pop(context);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      e.toString().replaceAll(
+                                        'Exception: ',
+                                        '',
+                                      ),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
                           },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
