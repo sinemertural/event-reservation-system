@@ -17,6 +17,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  bool _isPasswordVisible = false;
+
   @override
   void dispose() {
     // Login -> Events kısmına geçişte login ekranı artık olmadığı için dispose ile belleği temilziyoruz. (Memory Leak önlendi.)
@@ -91,24 +93,56 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.email),
                     ),
-                    validator: (value) => value != null && value.isNotEmpty
-                        ? null
-                        : 'E-posta gerekli',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'E-posta gerekli';
+                      }
+                      // Regex ile standart e-posta formatı kontrolü
+                      final emailRegex = RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      );
+                      if (!emailRegex.hasMatch(value)) {
+                        return 'Lütfen geçerli bir e-posta adresi girin';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
 
                   // ŞİFRE ALANI
                   TextFormField(
                     controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
+                    // obscureText artık dinamik: _isPasswordVisible true ise gizleme (!true = false)
+                    obscureText: !_isPasswordVisible,
+                    decoration: InputDecoration(
                       labelText: 'Şifre',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock),
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.lock),
+                      // suffixIcon: Kutucuğun sağına ikon ekler
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          // İkona tıklandığında durumu tersine çevir ve ekranı yeniden çiz
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
                     ),
-                    validator: (value) => value != null && value.isNotEmpty
-                        ? null
-                        : 'Şifre gerekli',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Şifre gerekli';
+                      }
+                      if (value.length < 6) {
+                        return 'Şifre en az 6 karakter olmalıdır';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 24),
 

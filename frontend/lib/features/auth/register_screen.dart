@@ -103,9 +103,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.email),
                     ),
-                    validator: (value) => value != null && value.isNotEmpty
-                        ? null
-                        : 'E-posta gerekli',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'E-posta gerekli';
+                      }
+                      // Regex ile standart e-posta formatı kontrolü
+                      final emailRegex = RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      );
+                      if (!emailRegex.hasMatch(value)) {
+                        return 'Lütfen geçerli bir e-posta adresi girin';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
 
@@ -118,9 +128,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.lock),
                     ),
-                    validator: (value) => value != null && value.length >= 6
-                        ? null
-                        : 'Şifre en az 6 karakter olmalı',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Şifre gerekli';
+                      }
+                      if (value.length < 6) {
+                        return 'Şifre en az 6 karakter olmalıdır';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 24),
 
