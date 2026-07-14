@@ -44,24 +44,36 @@ class EventDetailScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: _buildInfoCard(
-                        icon: Icons.calendar_today,
-                        title: 'Tarih',
-                        value: formattedDate,
-                        color: Colors.blue,
+                        icon: Icons.people_outline,
+                        title: 'Toplam',
+                        value: '${event.totalQuota} Kişi',
+                        color: Colors.orange,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 16), // Araya ferah bir boşluk
                     Expanded(
                       child: _buildInfoCard(
                         icon: Icons.group,
-                        title: 'Kontenjan',
+                        title: 'Kalan',
                         value: isFull ? 'Dolu' : '${event.availableQuota} Kişi',
                         color: isFull ? Colors.red : Colors.green,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16), // İki satır arası boşluk
+                // 2. SATIR: TARİH KARTI (Alt satırda, tam genişlikte)
+                SizedBox(
+                  width: double.infinity, // Kartın ekranı kaplamasını sağlar
+                  child: _buildInfoCard(
+                    icon: Icons.calendar_today,
+                    title: 'Tarih',
+                    value: formattedDate,
+                    color: Colors.blue,
+                  ),
+                ),
+
+                const SizedBox(height: 32),
 
                 // AÇIKLAMA
                 const Text(
