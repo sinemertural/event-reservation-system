@@ -6,7 +6,7 @@ import 'event_model.dart';
 abstract class IEventRepository {
   Future<List<EventModel>> getEvents({
     int page = 1,
-    int limit = 10,
+    int limit = 4,
     String? date,
   });
 
@@ -21,7 +21,7 @@ class EventRepository implements IEventRepository {
   @override
   Future<List<EventModel>> getEvents({
     int page = 1,
-    int limit = 10,
+    int limit = 4,
     String? date,
   }) async {
     try {

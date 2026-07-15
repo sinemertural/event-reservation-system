@@ -3,6 +3,7 @@ import * as eventService from '../services/event.service';
 
 export const getEvents = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('Flutterdan Gelen Query:', req.query);
     // istekten gelen query parametrelerini alıyoruz. Bunlar sayfa numarası, sayfa başına kayıt sayısı ve tarih filtresi olabilir. String'e çevirmeliyiz.
     const pageStr = req.query.page as string;
     const limitStr = req.query.limit as string;

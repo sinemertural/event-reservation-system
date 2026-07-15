@@ -8,10 +8,10 @@ export interface AuthRequest extends Request {
 
 export const requireAuth = (req: AuthRequest, res: Response, next: NextFunction): void => {
   
-  const authHeader = req.headers.authorization; // Authorization header'ını alıyoruz. Bu header genellikle "Bearer <token>" formatında olur.
+  const authHeader = req.headers.authorization; // Headerdaki authorization alanınını alıyoruz. genellikle "Bearer <token>" formatında olur.
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({ success: false, message: 'Yetkisiz erişim. Lütfen giriş yapın.' }); // 401 token yoksa
+    res.status(401).json({ success: false, message: 'Yetkisiz erişim. Lütfen giriş yapın.' }); // 401 : authentication başaırsız
     return;
   }
 

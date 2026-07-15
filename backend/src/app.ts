@@ -6,7 +6,6 @@ import reservationRoutes from './routes/reservation.routes';
 
 const app: Application = express();
 
-//Middlewares (Ara Katmanlar)
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes); //'/api/auth' ile başlayan tüm istekleri authRoutes dosyamıza yönlendir
