@@ -59,7 +59,7 @@ Geliştirme süreci boyunca Google Gemini modelinden destek alınmıştır.
 
 Projeyi ayağa kaldırmak için **Docker (Önerilen)** veya **Manuel Kurulum** seçeneklerinden birini tercih edebilirsiniz.
 
-### 🐳 Seçenek 1: Docker ile Veritabanı Kurulumu (Bonus)
+### 🐳 Seçenek 1: Docker ile Veritabanı Kurulumu 
 
 Bu proje kapsamında Docker, yalnızca PostgreSQL veritabanını hızlıca ayağa kaldırmak için kullanılmaktadır (backend servisi Docker'a dahil değildir, lokal olarak `npm run dev` ile çalıştırılır).
 
